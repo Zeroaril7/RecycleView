@@ -11,10 +11,24 @@ import com.bumptech.glide.request.RequestOptions
 
 class ListHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter<ListHeroAdapter.ListViewHolder>() {
 
+    private lateinit var onItemCLickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemCallback: OnItemClickCallback){
+        this.onItemCLickCallback = onItemCallback
+    }
+
+    inner class ListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var tvName: TextView = itemView.findViewById(R.id.tv_item_name)
+        var tvFrom: TextView = itemView.findViewById(R.id.tv_item_from)
+        var imgPhoto: ImageView = itemView.findViewById(R.id.img_item_photo)
+    }
+
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ListViewHolder {
         val view: View = LayoutInflater.from(viewGroup.context).inflate(R.layout.item_row_hero, viewGroup, false)
         return ListViewHolder(view)
     }
+
+
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val (name, from, photo) = listHero[position]
@@ -26,15 +40,16 @@ class ListHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter<Lis
 
         holder.tvName.text = name
         holder.tvFrom.text = from
+        holder.itemView.setOnClickListener{
+            onItemCLickCallback.onItemClicked(listHero[holder.adapterPosition])
+        }
     }
 
     override fun getItemCount(): Int {
         return listHero.size
     }
 
-    inner class ListViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var tvName: TextView = itemView.findViewById(R.id.tv_item_name)
-        var tvFrom: TextView = itemView.findViewById(R.id.tv_item_from)
-        var imgPhoto: ImageView = itemView.findViewById(R.id.img_item_photo)
+    interface OnItemClickCallback {
+        fun onItemClicked(data: Hero)
     }
 }

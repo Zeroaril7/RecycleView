@@ -5,11 +5,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil.ItemCallback
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
 class CardViewHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter<CardViewHeroAdapter.CardViewHolder>() {
+
+    private lateinit var onItemCLickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemCallback: OnItemClickCallback){
+        this.onItemCLickCallback = onItemCallback
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {
@@ -20,6 +27,7 @@ class CardViewHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter
     override fun onBindViewHolder(holder: CardViewHolder, position: Int) {
         val (name, from, photo) = listHero[position]
 
+
         Glide.with(holder.itemView.context)
             .load(photo)
             .apply(RequestOptions ().override(55,55))
@@ -27,6 +35,9 @@ class CardViewHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter
 
         holder.tvName.text = name
         holder.tvFrom.text = from
+        holder.itemView.setOnClickListener{
+            onItemCLickCallback.onItemClicked(listHero[holder.adapterPosition])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -38,4 +49,9 @@ class CardViewHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter
         var tvFrom: TextView = itemView.findViewById(R.id.tv_item_from)
         var imgPhoto: ImageView = itemView.findViewById(R.id.img_item_photo)
     }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(data: Hero)
+    }
 }
+

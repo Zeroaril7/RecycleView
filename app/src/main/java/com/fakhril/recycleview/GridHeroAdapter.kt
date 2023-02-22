@@ -10,6 +10,11 @@ import com.bumptech.glide.request.RequestOptions
 
 class GridHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter<GridHeroAdapter.GridHolder>() {
 
+    private lateinit var onItemCLickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemCallback: OnItemClickCallback){
+        this.onItemCLickCallback = onItemCallback
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GridHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_grid_hero, parent, false)
@@ -21,6 +26,10 @@ class GridHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter<Gri
             .load(listHero[position].photo)
             .apply(RequestOptions ().override(55,55))
             .into(holder.imgPhoto)
+
+        holder.itemView.setOnClickListener{
+            onItemCLickCallback.onItemClicked(listHero[holder.adapterPosition])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -29,5 +38,8 @@ class GridHeroAdapter(val listHero : ArrayList<Hero>) : RecyclerView.Adapter<Gri
 
     inner class GridHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         var imgPhoto: ImageView = itemView.findViewById(R.id.img_item_photo)
+    }
+    interface OnItemClickCallback {
+        fun onItemClicked(data: Hero)
     }
 }
